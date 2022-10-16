@@ -12,6 +12,9 @@ const signup = async (req, res) => {
       mobile,
       gender,
       upi: `${mobile}@youpay.com`,
+      creditScore: 750,
+      funds: 0,
+      isAuthenticated: false,
     });
     await result.save();
     const token = jwt.sign(

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const UserSchema = mongoose.Schema({
   name: {
     type: String,
@@ -11,6 +11,15 @@ const UserSchema = mongoose.Schema({
   },
   gender: {
     type: String,
+  },
+  creditScore: {
+    type: Number,
+  },
+  funds: {
+    type: Number,
+  },
+  isAuthenticated: {
+    type: Boolean,
   },
   password: {
     type: String,
@@ -33,6 +42,9 @@ const UserSchema = mongoose.Schema({
       duration: {
         type: Date,
       },
+      creationDate: {
+        type: Date,
+      },
     },
   ],
   lendedTo: [
@@ -46,8 +58,11 @@ const UserSchema = mongoose.Schema({
       duration: {
         type: Date,
       },
+      lendedDate: {
+        type: Date,
+      },
     },
   ],
 });
 
-module.exports = mongoose.model("Users", UserSchema);
+module.exports = mongoose.model('Users', UserSchema);

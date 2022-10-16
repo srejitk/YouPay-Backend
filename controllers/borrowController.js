@@ -3,14 +3,13 @@ const userModel = require('../models/userModel');
 const borrow = async (req, res) => {
   const { amount, message, duration, upi } = req.body;
 
-  console.log(req.user);
-
   try {
     const currentUser = await userModel.findOne({ mobile: req.user?.mobile });
     const borrowerDetails = {
       borrower_id: currentUser._id,
       amount: amount,
       duration: duration,
+      lendedDate: new Date().getTime(),
     };
     const lender = await userModel.findOne({ upi });
 
@@ -27,6 +26,7 @@ const borrow = async (req, res) => {
           amount: amount,
           duration: duration,
           message: message,
+          creationDate: new Date().getTime(),
         },
       },
     });
