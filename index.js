@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const authRouter = require('./routes/authRoute');
 const borrowRouter = require('./routes/borrowRoute');
+const corsConfig = require('./config/corsConfig');
 dotenv.config();
 
 const app = express();
@@ -16,7 +17,7 @@ app.use(
     extended: true,
   })
 );
-app.use(cors());
+app.use(cors(corsConfig));
 
 app.use('/auth', authRouter);
 app.use('/borrow', borrowRouter);
