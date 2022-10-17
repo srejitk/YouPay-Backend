@@ -8,12 +8,6 @@ const signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
 
-    const isExisting = userModel.findOne({ mobile });
-
-    if (isExisting) {
-      return res.status(404).json({ message: ERR.PHONE_ALREADY_EXISTS_ERR });
-    }
-
     const newUser = new userModel({
       name,
       password: hashPassword,
@@ -27,8 +21,8 @@ const signup = async (req, res) => {
     await newUser.save();
     const token = jwt.sign(
       {
-        mobile: result.mobile,
-        id: result._id,
+        mobile: newUser.mobile,
+        id: newUser._id,
       },
       process.env.SECRET_KEY,
       {
@@ -45,7 +39,7 @@ const signup = async (req, res) => {
 const signin = async (req, res) => {
   const { mobile, password } = req.body;
   try {
-    const existingUser = await userModel.findOne({ mobile });
+    const existingUser = await userModel.findOne({ mobile }).lean();
     if (!existingUser) {
       return res.status(404).json({ message: ERR.USER_NOT_EXISTS_ERR });
     }
