@@ -7,6 +7,8 @@ const borrow = async (req, res) => {
     const lender = await userModel.findOne({ upi });
     const currentUser = await userModel.findOne({ mobile: req.user?.mobile });
     const borrowerDetails = {
+      name: currentUser.name,
+      upi: currentUser.upi,
       borrower_id: currentUser._id,
       amount: amount,
       duration: duration,
