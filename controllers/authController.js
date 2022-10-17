@@ -1,12 +1,20 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const ERR = require('../utils/errors.utils');
 const signup = async (req, res) => {
   const { name, password, mobile, gender } = req.body;
   try {
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
-    const result = new userModel({
+
+    const isExisting = userModel.findOne({ mobile });
+
+    if (isExisting) {
+      return res.status(404).json({ message: ERR.PHONE_ALREADY_EXISTS_ERR });
+    }
+
+    const newUser = new userModel({
       name,
       password: hashPassword,
       mobile,
@@ -16,7 +24,7 @@ const signup = async (req, res) => {
       funds: 0,
       isAuthenticated: false,
     });
-    await result.save();
+    await newUser.save();
     const token = jwt.sign(
       {
         mobile: result.mobile,
@@ -27,10 +35,10 @@ const signup = async (req, res) => {
         expiresIn: '1H',
       }
     );
-    res.status(201).json({ result: result, token });
+    res.status(201).json({ newUser, token });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: 'Something went wrong with signup' });
+    res.status(500).json({ message: ERR.SIGNUP_FAILED_ERR });
   }
 };
 
@@ -39,7 +47,7 @@ const signin = async (req, res) => {
   try {
     const existingUser = await userModel.findOne({ mobile });
     if (!existingUser) {
-      return res.status(404).json({ message: 'User does not exist' });
+      return res.status(404).json({ message: ERR.USER_NOT_EXISTS_ERR });
     }
 
     const isPasswordCorrect = await bcrypt.compare(
@@ -48,7 +56,7 @@ const signin = async (req, res) => {
     );
 
     if (!isPasswordCorrect) {
-      return res.status(404).json({ message: 'Password Incorrect' });
+      return res.status(404).json({ message: ERR.PASSWORD_INCORRECT_ERR });
     }
 
     const token = jwt.sign(
@@ -59,10 +67,10 @@ const signin = async (req, res) => {
       }
     );
 
-    res.status(200).json({ result: existingUser, token });
+    res.status(200).json({ existingUser, token });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: 'Something went wrong with signin' });
+    res.status(500).json({ message: ERR.SIGNIN_FAILED_ERR });
   }
 };
 

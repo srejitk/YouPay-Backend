@@ -40,7 +40,7 @@ const UserSchema = mongoose.Schema({
         type: String,
       },
       duration: {
-        type: Date,
+        type: String,
       },
       creationDate: {
         type: Date,
@@ -56,7 +56,7 @@ const UserSchema = mongoose.Schema({
         type: Number,
       },
       duration: {
-        type: Date,
+        type: String,
       },
       lendedDate: {
         type: Date,
